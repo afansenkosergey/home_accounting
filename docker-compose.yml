@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+      - cache
+    volumes:
+      - .:/app
+    networks:
+      - mynetwork
+    command: >
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_DB=budget
+      - POSTGRES_USER=budget
+      - POSTGRES_PASSWORD=budget
+    networks:
+      - mynetwork
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  cache:
+    image: redis
+    networks:
+      - mynetwork
+
+
+networks:
+  mynetwork:
+
+volumes:
+  pgdata:

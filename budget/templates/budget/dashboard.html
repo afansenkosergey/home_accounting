@@ -1,0 +1,44 @@
+{% extends 'budget/base.html' %}
+{% block title %}Список расходов{% endblock %}
+{% block content %}
+    <div class="container">
+        <ul class="messages">
+            {% for message in messages %}
+                <div {% if message.tags %}
+                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </ul>
+        <div class="row mt-4">
+            <div class="col-md-12 mb-3">
+                <div class="btn" role="group" aria-label="Dashboard Actions">
+                    <a href="{% url 'create_family' %}" class="btn btn-primary">Создать семейный аккаунт</a>
+                    {% if not family %}
+                        <a href="{% url 'join_family' %}" class="btn btn-success">Войти в семейный аккаунт</a>
+                    {% endif %}
+                    <a href="{% url 'leave_family' %}" class="btn btn-danger">Покинуть семейный аккаунт</a>
+                </div>
+            </div>
+        </div>
+        <p>Привет, <strong>{{ user.last_name }} {{ user.first_name }}</strong>!</p>
+        {% if family %}
+            <p>Название семейного аккаунта: {{ family.name }}</p>
+            {% if family.created_by == user %}
+                <p>Токен для добавления в семейный аккаунт: {{ family_token.token }}</p>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Члены семейного аккаунта:</h3>
+                    <ul class="list-group">
+                        {% for member in family_members %}
+                            <li class="list-group-item">{{ member.user.last_name }} {{ member.user.first_name }}</li>
+                        {% empty %}
+                            <li class="list-group-item">Нет членов семейного аккаунта.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <p>У вас нет семейного аккаунта</p>
+        {% endif %}
+    </div>
+{% endblock %}

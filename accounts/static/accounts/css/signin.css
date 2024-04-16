@@ -1,0 +1,23 @@
+body {
+    background-image: url('../img/1.jpeg'); /* Путь к вашей картинке */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Чтобы фон оставался фиксированным при прокрутке страницы */
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Высота равная высоте видимой области окна браузера */
+}
+
+.form-container {
+    width: 400px; /* Ширина вашей формы */
+    padding: 20px;
+    border: 1px solid rgba(204, 204, 204, 0.54);
+    border-radius: 5px;
+    background-color: rgba(249, 249, 249, 0.69);
+}

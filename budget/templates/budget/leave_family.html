@@ -1,0 +1,22 @@
+{% extends 'budget/base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Покинуть семью</h3>
+                </div>
+                <div class="card-body">
+                    <p>Вы уверены, что хотите покинуть семью?</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Leave Family</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

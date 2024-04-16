@@ -1,0 +1,85 @@
+{% extends 'budget/base.html' %}
+{% block title %}Список доходов{% endblock %}
+{% block content %}
+    <div class="container mt-3">
+        <ul class="messages">
+            {% for message in messages %}
+                <div {% if message.tags %}
+                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </ul>
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <a href="{% url 'add_income' %}" class="btn btn-success"> + Добавить</a>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'income_list' %}" class="btn btn-warning">Обновить</a>
+            </div>
+        </div>
+        <form method="GET" action="{% url 'income_list' %}" class="form-inline mb-4">
+            <div class="form-group row">
+                <label for="month" class="col-md-2 col-form-label text-md-right">Выберите месяц:</label>
+                <div class="col-md-2">
+                    <select name="month" id="month" class="form-control">
+                        <option value="">Выберите месяц</option>
+                        <option value="1" {% if selected_month == 1 %}selected{% endif %}>Январь</option>
+                        <option value="2" {% if selected_month == 2 %}selected{% endif %}>Февраль</option>
+                        <option value="3" {% if selected_month == 3 %}selected{% endif %}>Март</option>
+                        <option value="4" {% if selected_month == 4 %}selected{% endif %}>Апрель</option>
+                        <option value="5" {% if selected_month == 5 %}selected{% endif %}>Май</option>
+                        <option value="6" {% if selected_month == 6 %}selected{% endif %}>Июнь</option>
+                        <option value="7" {% if selected_month == 7 %}selected{% endif %}>Июль</option>
+                        <option value="8" {% if selected_month == 8 %}selected{% endif %}>Август</option>
+                        <option value="9" {% if selected_month == 9 %}selected{% endif %}>Сентябрь</option>
+                        <option value="10" {% if selected_month == 10 %}selected{% endif %}>Октябрь</option>
+                        <option value="11" {% if selected_month == 11 %}selected{% endif %}>Ноябрь</option>
+                        <option value="12" {% if selected_month == 12 %}selected{% endif %}>Декабрь</option>
+                    </select>
+                </div>
+                <label for="year" class="col-md-2 col-form-label text-md-right">Выберите год:</label>
+                <div class="col-md-2">
+                    <select name="year" id="year" class="form-control">
+                        <option value="">Выберите год</option>
+                        {% for year in years_list %}
+                            <option value="{{ year }}"
+                                    {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">Фильтр</button>
+                </div>
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Источник</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for income in incomes %}
+                <tr>
+                    <td>{{ income.user.last_name }} {{ income.user.first_name }}</td>
+                    <td>{{ income.amount }}</td>
+                    <td>{{ income.income_category.name }}</td>
+                    <td>{{ income.description }}</td>
+                    <td>{{ income.date|date:"d.m.Y" }}</td>
+                    <td>
+                        <a href="{% url 'edit_income' income.id %}" class="btn bi bi-pencil-square"></a>
+                        <form method="post" action="{% url 'delete_income' income.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn bi bi-trash3"></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

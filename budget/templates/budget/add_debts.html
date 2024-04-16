@@ -1,0 +1,29 @@
+{% extends 'budget/base.html' %}
+{% block title %}Добавить долг{% endblock %}
+{% block content %}
+    <h2>Добавить новый долг</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="amount">Сумма:</label>
+            <input type="number" id="amount" name="amount" class="form-control" placeholder="Введите сумму" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание:</label>
+            <input type="text" id="description" name="description" class="form-control" placeholder="Введите описание">
+        </div>
+        <div class="form-group">
+            <label for="start_date">Дата взятия долга:</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="repayment_period_months">Срок (месяцы):</label>
+            <input type="number" id="repayment_period_months" name="repayment_period_months" class="form-control" placeholder="Срок в месяцах" required>
+        </div>
+        <div class="form-group">
+            <label for="interest_rate">Процентная ставка (%):</label>
+            <input type="number" id="interest_rate" name="interest_rate" class="form-control" placeholder="Процентная ставка">
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+{% endblock %}

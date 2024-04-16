@@ -1,0 +1,47 @@
+{% extends 'budget/base.html' %}
+{% block title %}Выбор категории и отчет{% endblock %}
+{% block content %}
+<div class="container">
+  <h2 class="my-4">Выбор категории и отчет</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group col-lg-3">
+      <label for="category">Выберите категорию:</label>
+      <select name="category" id="category" class="form-select ">
+        <option value="" selected disabled>Выберите категорию</option>
+        {% for category in user_categories %}
+          <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group col-lg-3">
+      <label for="month">Выберите месяц:</label>
+      <select name="month" id="month" class="form-select">
+        <option value="" selected disabled>Выберите месяц</option>
+        <option value="1">Январь</option>
+        <option value="2">Февраль</option>
+        <option value="3">Март</option>
+        <option value="4">Апрель</option>
+        <option value="5">Май</option>
+        <option value="6">Июнь</option>
+        <option value="7">Июль</option>
+        <option value="8">Август</option>
+        <option value="9">Сентябрь</option>
+        <option value="10">Октябрь</option>
+        <option value="11">Ноябрь</option>
+        <option value="12">Декабрь</option>
+      </select>
+    </div>
+    <div class="form-group col-lg-3">
+      <label for="year">Выберите год:</label>
+      <select name="year" id="year" class="form-select">
+        <option value="" selected disabled>Выберите год</option>
+        {% for year in years_list %}
+          <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary my-3">Показать отчет</button>
+  </form>
+</div>
+{% endblock %}

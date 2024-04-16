@@ -1,0 +1,47 @@
+{% extends 'budget/base.html' %}
+{% block title %}Добавить доход{% endblock %}
+{% block content %}
+    <div class="container my-5 col-md-5">
+        <ul class="messages">
+            {% for message in messages %}
+                <div {% if message.tags %}
+                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </ul>
+        <h2 class="mb-4">Добавить новый доход</h2>
+        <form method="POST" action="{% url 'add_income' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="amount">Сумма:</label>
+                <input type="number" id="amount" name="amount" class="form-control" placeholder="Введите сумму"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <input type="text" class="form-control" id="description" name="description"
+                       placeholder="Введите описание">
+            </div>
+            <div class="form-group">
+                <label for="income_category">Источник дохода:</label>
+                <div class="input-group">
+                    <select id="income_category" name="income_category" class="form-select" required>
+                        {% for income_categories in income_category %}
+                            <option value="{{ income_categories.id }}">{{ income_categories.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="input-group-append">
+                        &nbsp;
+                        <a href="{% url 'add_income_category' %}" class="btn btn-success">+</a>
+                        <a href="{% url 'income_category_list' %}" class="btn btn-danger bi bi-pencil-square"></a>
+                    </div>
+                </div>
+                <div class="invalid-feedback">Please select a subcategory.</div>
+            </div>
+            <div class="form-group">
+                <label for="date">Дата:</label>
+                <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary my-3">Добавить</button>
+        </form>
+    </div>
+{% endblock %}

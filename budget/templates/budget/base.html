@@ -1,0 +1,93 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="{% static 'budget/js/script.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+            integrity="sha384-aSmgF0J4uL+3uxUrlT6Zfb3W9yGDKX3Yi5QnjhI5Asj0A6b3UggJp1yv4xXpFMNQ"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div class="container-fluid flex-grow-1 d-flex">
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+        <a  class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+            <svg class="bi pe-none me-2" width="40" height="32">
+            </svg>
+            <span class="fs-4 bi bi-cash-coin"> Бухгалтерия</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link link-body-emphasis bi bi-person-lines-fill" aria-current="page">
+                    Семейный аккаунт
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'expense_list' %}" class="nav-link link-body-emphasis bi bi-sort-up-alt" aria-current="page">
+                    Расходы
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'income_list' %}" class="nav-link link-body-emphasis bi bi-sort-down-alt">
+                    Доходы
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'debts_list' %}" class="nav-link link-body-emphasis bi bi-database-fill-exclamation">
+                    Долги
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'income_expense_report' %}" class="nav-link link-body-emphasis bi bi-file-earmark-bar-graph">
+                    Отчеты
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'currency_rates' %}" class="nav-link link-body-emphasis bi bi-file-spreadsheet">
+                    Конвертер валют
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <div class="dropdown mb-5">
+            <a href="#"
+               class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle bi bi-person-circle"
+               data-bs-toggle="dropdown" aria-expanded="false">&nbsp;{{ request.user.last_name }} {{ request.user.first_name }}
+            </a>
+            <ul class="dropdown-menu text-small shadow">
+                <li><a class="dropdown-item bi bi-person-fill-gear" href="{% url 'edit_profile' %}"> Изменить профиль</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item bi bi-box-arrow-right" href="{% url 'logout' %}"> Выйти</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<footer class="navbar fixed-bottom navbar-expand navbar-dark bg-light d-flex justify-content-center align-items-center">
+    <ul class="nav justify-content-center border-bottom pb-2">
+    </ul>
+    <p class="text-dark">© 2023 TeachMeSkills, Created by: Afanasenko Sergey</p>
+</footer>
+
+
+</body>
+</html>

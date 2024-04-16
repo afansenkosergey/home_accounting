@@ -1,0 +1,53 @@
+{% extends 'budget/base.html' %}
+{% block title %}Список долгов{% endblock %}
+{% block content %}
+    <div class="container mt-3">
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <a href="{% url 'add_debts' %}" class="btn btn-success"> + Добавить</a>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'debts_list' %}" class="btn btn-warning">Обновить</a>
+            </div>
+        </div>
+        <h2 class="mb-4">Список долгов</h2>
+        <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Сумма</th>
+          <th scope="col">Описание</th>
+          <th scope="col">Дата начала</th>
+          <th scope="col">Срок (месяцы)</th>
+          <th scope="col">Дата окончания</th>
+          <th scope="col">Процентная ставка</th>
+          <th scope="col">Ежемесячный платеж</th>
+          <th scope="col">Статус</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for debt in debts %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ debt.amount }}</td>
+            <td>{{ debt.description }}</td>
+            <td>{{ debt.start_date|date:"d.m.Y" }}</td>
+            <td>{{ debt.repayment_period_months }}</td>
+            <td>{{ debt.end_date|date:"d.m.Y" }}</td>
+            <td>{{ debt.interest_rate }}%</td>
+            <td>{{ debt.calculate_monthly_payment|floatformat:2 }}</td>
+            <td>{% if debt.is_paid %}Оплачено{% else %}Не оплачено{% endif %}</td>
+            <td>
+                <form method="post" action="{% url 'delete_debts' debt.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-close"></button>
+                </form>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+{% endblock %}
+
+

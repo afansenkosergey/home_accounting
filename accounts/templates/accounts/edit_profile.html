@@ -1,0 +1,39 @@
+{% extends 'budget/base.html' %}
+{% block title %}Добавить подкатегорию{% endblock %}
+{% block content %}
+    <a class="btn btn-secondary my-3" href="{% url 'change_password' %}">Изменить пароль</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3 text-center col-md-6">
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <div {% if message.tags %}
+                                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <h1 class="mb-4">Изменить профиль</h1>
+                <form method="post" enctype="multipart/form-data" class="col-md-6">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_first_name" class="form-label">Имя</label>
+                        <input type="text" name="first_name" id="id_first_name" class="form-control" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_last_name" class="form-label">Фамилия</label>
+                        <input type="text" name="last_name" id="id_last_name" class="form-control" value="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Эл. почта</label>
+                        <input type="email" name="email" id="id_email" class="form-control" value="" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

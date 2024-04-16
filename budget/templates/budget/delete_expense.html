@@ -1,0 +1,10 @@
+{% extends 'budget/base.html' %}
+{% block title %}Список расходов{% endblock %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <p>Вы уверены, что хотите удалить эту транзакцию?</p>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="{% url 'expense_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+{% endblock %}

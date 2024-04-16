@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" href="{% static 'accounts/css/signup.css' %}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+            integrity="sha384-aSmgF0J4uL+3uxUrlT6Zfb3W9yGDKX3Yi5QnjhI5Asj0A6b3UggJp1yv4xXpFMNQ"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Sign UP</title>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-3">Регистрация</h2>
+            <form class="needs-validation" method="post" action="{% url 'signup' %}">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">Имя</label>
+                        <input type="text" class="form-control" name="first_name" placeholder="Введите имя" value=""
+                               required="">
+                        <div class="invalid-feedback">
+                            Valid first name is required.
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="lastName" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" name="last_name" placeholder="Введите фамилию" value=""
+                               required="">
+                        <div class="invalid-feedback">
+                            Valid last name is required.
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="username" class="form-label">Имя пользователя</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" name="username"
+                                   placeholder="Введите имя пользователя"
+                                   required="">
+                            <div class="invalid-feedback">
+                                Your username is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="email" class="form-label">Эл. почта</label>
+                        <input type="email" class="form-control" name="email" placeholder="you@example.com">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="address" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" name="password1" placeholder="Ввведите пароль..."
+                               required="">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="address2" class="form-label">Повторите пароль <span
+                                class="text-body-secondary"></span></label>
+                        <input type="password" class="form-control" name="password2" placeholder="Повторите пароль..."
+                               required="">
+                    </div>
+                    <div class="text-center">
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <div {% if message.tags %}
+                                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                            {% endfor %}
+                        </ul>
+                        <hr class="my-4">
+
+                        <button class="w-100 btn btn-primary btn-lg" type="submit">Зарегистрироваться</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

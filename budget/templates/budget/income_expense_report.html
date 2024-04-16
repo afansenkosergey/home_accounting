@@ -1,0 +1,55 @@
+{% extends 'budget/base.html' %}
+{% block title %}Отчет по доходам и расходам{% endblock %}
+{% block content %}
+    <a href="{% url 'select_category_report' %}" class="btn btn-primary my-4">Отчет по подкатегориям</a>
+    <div class="container mt-3">
+        <h2 class="mb-4">Отчет по доходам и расходам за месяц</h2>
+        <form method="GET" action="{% url 'income_expense_report' %}" class="form-inline mb-4">
+            <div class="form-group row">
+                <label for="month" class="col-md-2 col-form-label text-md-right">Выберите месяц:</label>
+                <div class="col-md-2">
+                    <select name="month" id="month" class="form-select">
+                        <option value="">Выберите месяц</option>
+                        <option value="1" {% if selected_month == 1 %}selected{% endif %}>Январь</option>
+                        <option value="2" {% if selected_month == 2 %}selected{% endif %}>Февраль</option>
+                        <option value="3" {% if selected_month == 3 %}selected{% endif %}>Март</option>
+                        <option value="4" {% if selected_month == 4 %}selected{% endif %}>Апрель</option>
+                        <option value="5" {% if selected_month == 5 %}selected{% endif %}>Май</option>
+                        <option value="6" {% if selected_month == 6 %}selected{% endif %}>Июнь</option>
+                        <option value="7" {% if selected_month == 7 %}selected{% endif %}>Июль</option>
+                        <option value="8" {% if selected_month == 8 %}selected{% endif %}>Август</option>
+                        <option value="9" {% if selected_month == 9 %}selected{% endif %}>Сентябрь</option>
+                        <option value="10" {% if selected_month == 10 %}selected{% endif %}>Октябрь</option>
+                        <option value="11" {% if selected_month == 11 %}selected{% endif %}>Ноябрь</option>
+                        <option value="12" {% if selected_month == 12 %}selected{% endif %}>Декабрь</option>
+                    </select>
+                </div>
+                <label for="year" class="col-md-2 col-form-label text-md-right">Выберите год:</label>
+                <div class="col-md-2">
+                    <select name="year" id="year" class="form-select">
+                        <option value="">Выберите год</option>
+                        {% for year in years_list %}
+                            <option value="{{ year }}"
+                                    {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary bi bi-check-lg"></button>
+                    <a href="{% url 'income_expense_report' %}" class="btn btn-danger bi bi-x-square-fill ml-2"></a>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-md-12">
+                {% if graphic %}
+                    <img src="data:image/png;base64,{{ graphic }}" alt="График доходов и расходов" class="img-fluid">
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        Нет данных для отображения графика.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

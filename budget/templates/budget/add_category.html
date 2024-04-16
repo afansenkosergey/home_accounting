@@ -1,0 +1,24 @@
+{% extends 'budget/base.html' %}
+{% block title %}Добавление новой категории{% endblock %}
+{% block content %}
+    <div class="container my-4">
+        <ul class="messages">
+            {% for message in messages %}
+                <div {% if message.tags %}
+                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </ul>
+        <h1>Добавление новой категории</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group col-lg-3">
+                <label for="name" class="form-label">Название подкатегории:</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Название подкатегории"
+                       required>
+                <div class="invalid-feedback">Пожалуйста, введите название подкатегории.</div>
+            </div>
+            <button type="submit" class="btn btn-primary my-3">Добавить</button>
+        </form>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,42 @@
+{% extends 'budget/base.html' %}
+{% block title %}Изменение дохода{% endblock %}
+{% block content %}
+    <div class="container my-5 col-md-5">
+        <ul class="messages">
+            {% for message in messages %}
+                <div {% if message.tags %}
+                    class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+            {% endfor %}
+        </ul>
+        <h2 class="mb-4">Изменение дохода</h2>
+        <form method="post" action="{% url 'edit_income' income.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="amount">Сумма:</label>
+                <input type="text" id="amount" name="amount" class="form-control" value="{{ income.amount }}">
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <input type="text" id="description" name="description" class="form-control"
+                       value="{{ income.description }}">
+            </div>
+            <div class="form-group">
+                <label for="income_category">Источник дохода:</label>
+                <div class="input-group">
+                    <select id="income_category" name="income_category" class="form-control" required>
+                        {% for income_categories in income_category %}
+                            <option value="{{ income_categories.id }}">{{ income_categories.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="invalid-feedback">Please select a subcategory.</div>
+            </div>
+            <div class="form-group">
+                <label for="date">Дата:</label>
+                <input type="date" id="date" name="date" class="form-control" required>
+                <div class="invalid-feedback">Please enter a valid date.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+{% endblock %}
