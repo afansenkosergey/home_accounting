@@ -687,7 +687,7 @@ def leave_family(request):
 # ------------------------Курсы валют-----------------------------
 
 @login_required()
-def get_currency_rates():
+def get_currency_rates(request):
     url = 'https://www.nbrb.by/api/exrates/rates?periodicity=0'
     response = requests.get(url)
 
@@ -699,8 +699,9 @@ def get_currency_rates():
         return {}
 
 
+@login_required()
 def currency_rates(request):
-    rates = get_currency_rates()
+    rates = get_currency_rates(request)
     return render(request, 'budget/currency.html', {'currency_rates': rates})
 
 
@@ -711,7 +712,7 @@ def currency_converter(request):
 
         amount = float(request.POST.get('amount', 2))
 
-        rates = get_currency_rates()
+        rates = get_currency_rates(request)
         if from_currency in rates:
             from_rate = rates[from_currency]
 
