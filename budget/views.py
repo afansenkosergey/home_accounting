@@ -8,7 +8,6 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.views.decorators.cache import cache_page
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
@@ -19,7 +18,6 @@ from .models import Income, Expense, Category, Debts, Family, FamilyMember, Subc
 # -----------------Расходы----------------
 
 @login_required()
-@cache_page(60 * 5)
 def expense_list(request):
     """
         Функция представления для отображения списка расходов текущего пользователя или члена семьи.
@@ -83,7 +81,6 @@ def add_expense(request):
 
 
 @login_required()
-@cache_page(60 * 5)
 def category_list(request):
     """
         Функция представления для отображения списка категорий расходов текущего пользователя.
@@ -127,7 +124,6 @@ def delete_category(request, category_id):
 
 
 @login_required()
-@cache_page(60 * 5)
 def subcategory_list(request):
     """
         Функция представления для отображения списка подкатегорий на основе категорий расходов текущего пользователя.
@@ -288,7 +284,6 @@ def import_expenses_csv(request):
 # -----------------Доходы----------------
 
 @login_required()
-@cache_page(60 * 5)
 def income_list(request):
     """
         Функция представления для отображения списка доходов текущего пользователя или члена семьи.
@@ -334,7 +329,6 @@ def add_income(request):
 
 
 @login_required()
-@cache_page(60 * 5)
 def income_category_list(request):
     """
         Функция представления для отображения списка категорий доходов текущего пользователя.
@@ -411,7 +405,6 @@ def delete_income(request, income_id):
 # ---------------------Долги-----------------------------
 
 @login_required()
-@cache_page(60 * 5)
 def debts_list(request):
     """
         Функция представления для отображения списка долгов текущего пользователя или члена семьи.
@@ -472,7 +465,6 @@ def delete_debts(request, debts_id):
 # ------------------Отчеты------------------------
 
 @login_required()
-@cache_page(60 * 5)
 def income_expense_report(request):
     """
         Функция отчета о доходах и расходах.
@@ -563,7 +555,6 @@ def select_category_report(request):
 
 
 @login_required()
-@cache_page(60 * 5)
 def category_expense_report(request, category_id, year=None, month=None):
     """
         Функция отчета о расходах по категории.
@@ -688,6 +679,9 @@ def leave_family(request):
 
 @login_required()
 def get_currency_rates(request):
+    """
+        Получает текущие курсы валют с внешнего API.
+    """
     url = 'https://www.nbrb.by/api/exrates/rates?periodicity=0'
     response = requests.get(url)
 
@@ -701,12 +695,18 @@ def get_currency_rates(request):
 
 @login_required()
 def currency_rates(request):
+    """
+        Отображает страницу с текущими курсами валют.
+    """
     rates = get_currency_rates(request)
     return render(request, 'budget/currency.html', {'currency_rates': rates})
 
 
-@cache_page(60 * 5)
+@login_required()
 def currency_converter(request):
+    """
+        Отображает страницу для конвертации валюты.
+    """
     if request.method == 'POST':
         from_currency = request.POST.get('from_currency')
 
