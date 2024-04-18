@@ -66,6 +66,25 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <div class="pagination justify-content-center">
+                    <ul class="pagination">
+                        {% if expenses.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                            <li class="page-item"><a class="page-link"
+                                                     href="?page={{ expenses.previous_page_number }}">{{ expenses.previous_page_number }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item active"><span class="page-link">{{ expenses.number }}</span></li>
+                        {% if expenses.has_next %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="?page={{ expenses.next_page_number }}">{{ expenses.next_page_number }}</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="?page={{ expenses.paginator.num_pages }}">&raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- Общая сумма расходов -->
                 <div class="total">
                     <strong>Общая сумма:</strong> {{ total_amount }}
                 </div>

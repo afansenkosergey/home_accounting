@@ -12,10 +12,10 @@
         <h2 class="mb-4">Расходы по подкатегориям</h2>
         <div class="row">
             <div class="col-md-12">
-            {% if month %}
-                <p>Выбранный месяц: {% if month %}{{ month }}{% else %}не выбран{% endif %}</p>
-                <p>Выбранный год: {% if year %}{{ year }}{% else %}не выбран{% endif %}</p>
-            {% endif %}
+                {% if month %}
+                    <p>Выбранный месяц: {% if month %}{{ month }}{% else %}не выбран{% endif %}</p>
+                    <p>Выбранный год: {% if year %}{{ year }}{% else %}не выбран{% endif %}</p>
+                {% endif %}
                 {% if graphic %}
                     <img src="data:image/png;base64,{{ graphic }}" alt="График расходов по подкатегориям"
                          class="img-fluid">
@@ -24,6 +24,12 @@
                         Нет данных для отображения графика.
                     </div>
                 {% endif %}
+                <h5>Суммы расходов по подкатегориям</h5>
+                <ul>
+                    {% for subcategory_data in subcategories_data %}
+                        <li>{{ subcategory_data.name }}: {{ subcategory_data.total_expense }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

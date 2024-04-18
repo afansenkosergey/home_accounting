@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from matplotlib import pyplot as plt
 from io import BytesIO
@@ -20,9 +21,9 @@ from .models import Income, Expense, Category, Debts, Family, FamilyMember, Subc
 @login_required()
 def expense_list(request):
     """
-        Функция представления для отображения списка расходов текущего пользователя или члена семьи.
-        Если пользователь является членом семьи, отображаются только расходы за текущий месяц и год.
-        В противном случае отображаются все расходы пользователя.
+    Функция представления для отображения списка расходов текущего пользователя или члена семьи.
+    Если пользователь является членом семьи, отображаются только расходы за текущий месяц и год.
+    В противном случае отображаются все расходы пользователя.
     """
     current_user = request.user
     family_member = FamilyMember.objects.filter(user=current_user).first()
@@ -34,11 +35,20 @@ def expense_list(request):
         current_year = today.year
         expenses = Expense.objects.filter(user__familymember=family_member, date__month=current_month,
                                           date__year=current_year).order_by('date')
+    paginator = Paginator(expenses, 10)
+    page_number = request.GET.get('page')
+    try:
+        paginated_expenses = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_expenses = paginator.page(1)
+    except EmptyPage:
+        paginated_expenses = paginator.page(paginator.num_pages)
+
     categories = Category.objects.all()
     total_amount = expenses.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
     return render(request, 'budget/expense_list.html',
-                  {'expenses': expenses, 'categories': categories, 'total_amount': total_amount})
+                  {'expenses': paginated_expenses, 'categories': categories, 'total_amount': total_amount})
 
 
 @login_required()
@@ -302,9 +312,17 @@ def income_list(request):
         family_members = FamilyMember.objects.filter(family=family_member.family)
         incomes = Income.objects.filter(user__familymember__in=family_members, date__month=current_month,
                                         date__year=current_year).order_by('date')
+    paginator = Paginator(incomes, 10)
+    page_number = request.GET.get('page')
+    try:
+        paginated_incomes = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_incomes = paginator.page(1)
+    except EmptyPage:
+        paginated_incomes = paginator.page(paginator.num_pages)
 
     return render(request, 'budget/income_list.html',
-                  {'incomes': incomes, 'years_list': years_list, 'selected_month': current_month,
+                  {'incomes': paginated_incomes, 'years_list': years_list, 'selected_month': current_month,
                    'selected_year': current_year})
 
 
@@ -416,8 +434,16 @@ def debts_list(request):
     else:
         family_members = FamilyMember.objects.filter(family=family_member.family)
         debts = Debts.objects.filter(user__familymember__in=family_members)
+    paginator = Paginator(debts, 10)
+    page_number = request.GET.get('page')
+    try:
+        paginated_debts = paginator.page(page_number)
+    except PageNotAnInteger:
+        paginated_debts = paginator.page(1)
+    except EmptyPage:
+        paginated_debts = paginator.page(paginator.num_pages)
 
-    return render(request, 'budget/debts_list.html', {'debts': debts})
+    return render(request, 'budget/debts_list.html', {'debts': paginated_debts})
 
 
 @login_required()
@@ -514,7 +540,7 @@ def income_expense_report(request):
     categories = [expense['category__name'] for expense in top_expenses]
     top_amounts = [expense['total_amount'] for expense in top_expenses]
     axes[1].pie(top_amounts, labels=categories, autopct='%1.1f%%', shadow=True, startangle=140)
-    axes[1].set_title('Расход по категориям')
+    axes[1].set_title('Общий расход по категориям')
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
@@ -557,7 +583,7 @@ def select_category_report(request):
 @login_required()
 def category_expense_report(request, category_id, year=None, month=None):
     """
-        Функция отчета о расходах по категории.
+    Функция отчета о расходах по категории.
     """
     category = get_object_or_404(Category, id=category_id)
     expenses = Expense.objects.filter(category=category)
@@ -571,10 +597,11 @@ def category_expense_report(request, category_id, year=None, month=None):
         return render(request, 'budget/category_expense_report.html', {'message': message})
 
     subcategory_expenses = expenses.values('subcategory__name').annotate(total_expense=Sum('amount'))
-    subcategories_list = [expense['subcategory__name'] for expense in subcategory_expenses]
-    sub_expenses_list = [expense['total_expense'] for expense in subcategory_expenses]
+    subcategories_data = [{'name': expense['subcategory__name'], 'total_expense': expense['total_expense']} for expense in subcategory_expenses]
 
     fig, ax = plt.subplots()
+    subcategories_list = [expense['name'] for expense in subcategories_data]
+    sub_expenses_list = [expense['total_expense'] for expense in subcategories_data]
     ax.pie(sub_expenses_list, labels=subcategories_list, autopct='%1.1f%%')
     ax.set_title(f'Расходы по категории: {category.name}')
 
@@ -592,6 +619,7 @@ def category_expense_report(request, category_id, year=None, month=None):
         'category': category,
         'year': year,
         'month': month,
+        'subcategories_data': subcategories_data,  # Добавляем данные по подкатегориям в контекст
     })
 
 

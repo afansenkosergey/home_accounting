@@ -81,5 +81,23 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="pagination justify-content-center">
+            <ul class="pagination">
+                {% if incomes.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ incomes.previous_page_number }}">{{ incomes.previous_page_number }}</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ incomes.number }}</span></li>
+                {% if incomes.has_next %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ incomes.next_page_number }}">{{ incomes.next_page_number }}</a>
+                    </li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ incomes.paginator.num_pages }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 {% endblock %}

@@ -12,41 +12,59 @@
         </div>
         <h2 class="mb-4">Список долгов</h2>
         <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Сумма</th>
-          <th scope="col">Описание</th>
-          <th scope="col">Дата начала</th>
-          <th scope="col">Срок (месяцы)</th>
-          <th scope="col">Дата окончания</th>
-          <th scope="col">Процентная ставка</th>
-          <th scope="col">Ежемесячный платеж</th>
-          <th scope="col">Статус</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for debt in debts %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ debt.amount }}</td>
-            <td>{{ debt.description }}</td>
-            <td>{{ debt.start_date|date:"d.m.Y" }}</td>
-            <td>{{ debt.repayment_period_months }}</td>
-            <td>{{ debt.end_date|date:"d.m.Y" }}</td>
-            <td>{{ debt.interest_rate }}%</td>
-            <td>{{ debt.calculate_monthly_payment|floatformat:2 }}</td>
-            <td>{% if debt.is_paid %}Оплачено{% else %}Не оплачено{% endif %}</td>
-            <td>
-                <form method="post" action="{% url 'delete_debts' debt.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-close"></button>
-                </form>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Дата начала</th>
+                <th scope="col">Срок (месяцы)</th>
+                <th scope="col">Дата окончания</th>
+                <th scope="col">Процентная ставка</th>
+                <th scope="col">Ежемесячный платеж</th>
+                <th scope="col">Статус</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for debt in debts %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ debt.amount }}</td>
+                    <td>{{ debt.description }}</td>
+                    <td>{{ debt.start_date|date:"d.m.Y" }}</td>
+                    <td>{{ debt.repayment_period_months }}</td>
+                    <td>{{ debt.end_date|date:"d.m.Y" }}</td>
+                    <td>{{ debt.interest_rate }}%</td>
+                    <td>{{ debt.calculate_monthly_payment|floatformat:2 }}</td>
+                    <td>{% if debt.is_paid %}Оплачено{% else %}Не оплачено{% endif %}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_debts' debt.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-close"></button>
+                        </form>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination justify-content-center">
+            <ul class="pagination">
+                {% if debts.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ debts.previous_page_number }}">{{ debts.previous_page_number }}</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ debts.number }}</span></li>
+                {% if debts.has_next %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ debts.next_page_number }}">{{ debts.next_page_number }}</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ debts.paginator.num_pages }}">&raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 {% endblock %}
 
