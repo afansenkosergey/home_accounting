@@ -12,7 +12,7 @@ from django.utils import timezone
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
-from .forms import CSVUploadForm, CategoryForm, SubcategoryForm, IncomeCategoryForm
+from .forms import CategoryForm, SubcategoryForm, IncomeCategoryForm
 from .models import Income, Expense, Category, Debts, Family, FamilyMember, Subcategory, IncomeCategory, FamilyToken
 
 
@@ -64,9 +64,9 @@ def add_expense(request):
         amount = request.POST.get('amount')
         category_id = request.POST.get('category')
         subcategory_id = request.POST.get('subcategory')
-        date = request.POST.get('date')
+        select_date = request.POST.get('date')
 
-        if not amount or not category_id or not subcategory_id or not date:
+        if not amount or not category_id or not subcategory_id or not select_date:
             messages.warning(request, 'Пожалуйста, заполните все поля.')
             return redirect('add_expense')
 
@@ -74,7 +74,7 @@ def add_expense(request):
         subcategory = Subcategory.objects.get(id=subcategory_id)
         user = request.user
 
-        Expense.objects.create(user=user, amount=amount, category=category, subcategory=subcategory, date=date)
+        Expense.objects.create(user=user, amount=amount, category=category, subcategory=subcategory, date=select_date)
         messages.success(request, 'Расход успешно добавлен!')
 
         return redirect('expense_list')
@@ -131,8 +131,6 @@ def delete_category(request, category_id):
         category.delete()
         messages.success(request, 'Категория удалена!')
         return redirect('category_list')
-
-    return render(request, 'budget/delete_category.html', {'category': category})
 
 
 @login_required()
@@ -214,7 +212,7 @@ def edit_expense(request, expense_id):
         category_id = request.POST['category']
         subcategory_id = request.POST['subcategory']
         amount = request.POST['amount']
-        date = request.POST['date']
+        select_date = request.POST['date']
 
         category = Category.objects.get(id=category_id)
         subcategory = Subcategory.objects.get(id=subcategory_id)
@@ -222,7 +220,7 @@ def edit_expense(request, expense_id):
         expense.category = category
         expense.subcategory = subcategory
         expense.amount = amount
-        expense.date = date
+        expense.date = select_date
         expense.save()
 
         messages.success(request, 'Расход успешно изменен!')
@@ -315,11 +313,11 @@ def add_income(request):
         amount = request.POST['amount']
         description = request.POST['description']
         income_category_id = request.POST['income_category']
-        date = request.POST['date']
+        select_date = request.POST['date']
         income_category = IncomeCategory.objects.get(id=income_category_id)
         user = request.user
         Income.objects.create(user=user, amount=amount, description=description, income_category=income_category,
-                              date=date)
+                              date=select_date)
         messages.success(request, 'Доход успешно добавлен.')
         return redirect('income_list')
     income_category = IncomeCategory.objects.filter(user=request.user)
@@ -365,7 +363,6 @@ def delete_income_category(request, category_id):
         category.delete()
         messages.success(request, 'Категория дохода успешно удалена.')
         return redirect('income_category_list')
-    return render(request, 'budget/delete_income_category.html', {'category': category})
 
 
 @login_required()
