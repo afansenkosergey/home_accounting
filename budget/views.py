@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -25,6 +25,7 @@ def expense_list(request):
     Если пользователь является членом семьи, отображаются только расходы за текущий месяц и год.
     В противном случае отображаются все расходы пользователя.
     """
+
     current_user = request.user
     family_member = FamilyMember.objects.filter(user=current_user).first()
     if not family_member:
@@ -33,9 +34,10 @@ def expense_list(request):
         today = date.today()
         current_month = today.month
         current_year = today.year
-        expenses = Expense.objects.filter(user__familymember=family_member, date__month=current_month,
+        family_members = FamilyMember.objects.filter(family=family_member.family)
+        expenses = Expense.objects.filter(user__familymember__in=family_members, date__month=current_month,
                                           date__year=current_year).order_by('date')
-    paginator = Paginator(expenses, 10)
+    paginator = Paginator(expenses, 11)
     page_number = request.GET.get('page')
     try:
         paginated_expenses = paginator.page(page_number)
@@ -268,29 +270,6 @@ def export_expenses_csv(request):
     return response
 
 
-@login_required()
-def import_expenses_csv(request):
-    """
-        Функция представления для импорта расходов из CSV файла.
-    """
-    if request.method == 'POST':
-        form = CSVUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            expenses_file = request.FILES['csv_file']
-            decoded_file = expenses_file.read().decode('utf-8').splitlines()
-            reader = csv.reader(decoded_file)
-            for row in reader:
-                date, category_name, subcategory, amount = row
-                category, created = Category.objects.get_or_create(name=category_name)
-                Expense.objects.create(user=request.user, date=date, category=category,
-                                       subcategory=subcategory, amount=amount)
-            return render(request, 'success.html', {'message': 'Data imported successfully!'})
-    else:
-        form = CSVUploadForm()
-
-    return render(request, 'budget/import_expenses.html', {'form': form})
-
-
 # -----------------Доходы----------------
 
 @login_required()
@@ -312,6 +291,7 @@ def income_list(request):
         family_members = FamilyMember.objects.filter(family=family_member.family)
         incomes = Income.objects.filter(user__familymember__in=family_members, date__month=current_month,
                                         date__year=current_year).order_by('date')
+    total_income = incomes.aggregate(total_income=Sum('amount'))['total_income'] or 0
     paginator = Paginator(incomes, 10)
     page_number = request.GET.get('page')
     try:
@@ -323,7 +303,7 @@ def income_list(request):
 
     return render(request, 'budget/income_list.html',
                   {'incomes': paginated_incomes, 'years_list': years_list, 'selected_month': current_month,
-                   'selected_year': current_year})
+                   'selected_year': current_year, 'total_income': total_income})
 
 
 @login_required()
@@ -493,7 +473,7 @@ def delete_debts(request, debts_id):
 @login_required()
 def income_expense_report(request):
     """
-        Функция отчета о доходах и расходах.
+    Функция отчета о доходах и расходах.
     """
     selected_month = request.GET.get('month')
     selected_year = request.GET.get('year')
@@ -506,8 +486,21 @@ def income_expense_report(request):
     if not selected_year:
         selected_year = date.today().year
 
-    incomes = Income.objects.filter(date__month=selected_month, date__year=selected_year)
-    expenses = Expense.objects.filter(date__month=selected_month, date__year=selected_year)
+    current_user = request.user
+    family_member = FamilyMember.objects.filter(user=current_user).first()
+
+    if family_member:
+        family_members = FamilyMember.objects.filter(family=family_member.family)
+        family_users = [family_member.user for family_member in family_members]
+
+        incomes = Income.objects.filter(Q(user=current_user) | Q(user__in=family_users),
+                                        date__month=selected_month, date__year=selected_year)
+        expenses = Expense.objects.filter(Q(user=current_user) | Q(user__in=family_users),
+                                          date__month=selected_month, date__year=selected_year)
+    else:
+        incomes = Income.objects.filter(user=current_user, date__month=selected_month, date__year=selected_year)
+        expenses = Expense.objects.filter(user=current_user, date__month=selected_month, date__year=selected_year)
+
     years_list = [year for year in range(2020, timezone.now().year + 1)]
 
     if not incomes.exists() and not expenses.exists():
@@ -586,7 +579,13 @@ def category_expense_report(request, category_id, year=None, month=None):
     Функция отчета о расходах по категории.
     """
     category = get_object_or_404(Category, id=category_id)
-    expenses = Expense.objects.filter(category=category)
+    current_user = request.user
+    family_member = FamilyMember.objects.filter(user=current_user).first()
+    if not family_member:
+        expenses = Expense.objects.filter(user=current_user, category=category)
+    else:
+        family_members = FamilyMember.objects.filter(family=family_member.family)
+        expenses = Expense.objects.filter(user__familymember__in=family_members, category=category)
     if year:
         expenses = expenses.filter(date__year=year)
     if month:
@@ -597,7 +596,8 @@ def category_expense_report(request, category_id, year=None, month=None):
         return render(request, 'budget/category_expense_report.html', {'message': message})
 
     subcategory_expenses = expenses.values('subcategory__name').annotate(total_expense=Sum('amount'))
-    subcategories_data = [{'name': expense['subcategory__name'], 'total_expense': expense['total_expense']} for expense in subcategory_expenses]
+    subcategories_data = [{'name': expense['subcategory__name'], 'total_expense': expense['total_expense']} for expense
+                          in subcategory_expenses]
 
     fig, ax = plt.subplots()
     subcategories_list = [expense['name'] for expense in subcategories_data]
@@ -619,7 +619,7 @@ def category_expense_report(request, category_id, year=None, month=None):
         'category': category,
         'year': year,
         'month': month,
-        'subcategories_data': subcategories_data,  # Добавляем данные по подкатегориям в контекст
+        'subcategories_data': subcategories_data,
     })
 
 

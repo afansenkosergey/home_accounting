@@ -13,7 +13,7 @@
                 <a href="{% url 'add_income' %}" class="btn btn-success"> + Добавить</a>
             </div>
             <div class="col-md-2">
-                <a href="{% url 'income_list' %}" class="btn btn-warning">Обновить</a>
+                <a href="{% url 'income_list' %}" class="btn btn-info">Обновить</a>
             </div>
         </div>
         <form method="GET" action="{% url 'income_list' %}" class="form-inline mb-4">
@@ -81,6 +81,7 @@
             {% endfor %}
             </tbody>
         </table>
+        <strong>Общий доход:</strong> {{ total_income }}
         <div class="pagination justify-content-center">
             <ul class="pagination">
                 {% if incomes.has_previous %}

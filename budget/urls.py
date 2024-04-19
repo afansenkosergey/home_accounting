@@ -11,7 +11,6 @@ urlpatterns = [
     path('categories/', views.category_list, name='category_list'),
     path('categories/<int:category_id>/delete/', views.delete_category, name='delete_category'),
     path('expenses/export/csv/', views.export_expenses_csv, name='export_expenses'),
-    path('expenses/import/csv/', views.import_expenses_csv, name='import_expenses'),
     path('income/', views.income_list, name='income_list'),
     path('income/add/', views.add_income, name='add_income'),
     path('income/<int:income_id>/edit/', views.edit_income, name='edit_income'),
