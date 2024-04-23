@@ -510,7 +510,7 @@ def income_expense_report(request):
     total_income = incomes.aggregate(total_income=Sum('amount'))['total_income'] or 0
     total_expense = expenses.aggregate(total_expense=Sum('amount'))['total_expense'] or 0
     income_balance = total_income - total_expense
-    top_expenses = expenses.values('category__name').annotate(total_amount=Sum('amount')).order_by('-total_amount')[:5]
+    top_expenses = expenses.values('category__name').annotate(total_amount=Sum('amount')).order_by('-total_amount')
 
     fig, axes = plt.subplots(1, 2, figsize=(15, 8))
     labels = ['Расходы', 'Доходы']

@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -87,6 +88,9 @@ class Debts(models.Model):
         total_amount = self.amount + (self.amount * (self.interest_rate / 100))
         monthly_payment = total_amount / self.repayment_period_months
         return monthly_payment
+
+    def is_paid(self):
+        return self.end_date < timezone.now().date() if self.end_date else False
 
     def __str__(self):
         return f"{self.user.username} - {self.amount} Статус: {'Не оплачено' if self.end_date else 'Оплачено'}"

@@ -12,8 +12,8 @@
         <form method="post" action="{% url 'add_income_category' %}" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="form-group col-lg-3">
-                <label for="name" class="form-label">Название подкатегории:</label>
-                <input type="text" id="name" name="name" class="form-control" placeholder="Название подкатегории"
+                <label for="name" class="form-label">Название источника:</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Название источника"
                        required>
                 <div class="invalid-feedback">Пожалуйста, введите название подкатегории.</div>
             </div>

@@ -12,10 +12,10 @@
         <form method="post">
             {% csrf_token %}
             <div class="form-group col-lg-3">
-                <label for="name" class="form-label">Название подкатегории:</label>
-                <input type="text" id="name" name="name" class="form-control" placeholder="Название подкатегории"
+                <label for="name" class="form-label">Название категории:</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Название категории"
                        required>
-                <div class="invalid-feedback">Пожалуйста, введите название подкатегории.</div>
+                <div class="invalid-feedback">Пожалуйста, введите название категории.</div>
             </div>
             <button type="submit" class="btn btn-primary my-3">Добавить</button>
         </form>
