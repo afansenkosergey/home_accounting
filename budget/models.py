@@ -90,10 +90,10 @@ class Debts(models.Model):
         return monthly_payment
 
     def is_paid(self):
-        return self.end_date < timezone.now().date() if self.end_date else False
+        return self.end_date <= timezone.now().date() if self.end_date else False
 
     def __str__(self):
-        return f"{self.user.username} - {self.amount} Статус: {'Не оплачено' if self.end_date else 'Оплачено'}"
+        return f"{self.user.username} - {self.amount} Статус: {'Оплачено' if self.is_paid() else 'Не оплачено'}"
 
 
 class Family(models.Model):
